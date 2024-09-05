@@ -1,58 +1,54 @@
-# Creazione di un nuovo utente Kubernetes
+# Creating a new Kubernetes user
 
-Gli utenti creati tramite certificati, come in questo caso, esistono globalmente nel cluster, non sono legati a un namespace specifico.
-Questo perché Kubernetes non ha un'entità interna che gestisce o registra utenti, ma si affida a meccanismi di autenticazione esterni (come il certificato client).
-Quindi, l'utente esiste per tutto il cluster. Può interagire con qualsiasi namespace, a patto che abbia i permessi corretti.
+Users created via certificates, as in this case, exist globally in the cluster and are not tied to a specific namespace. This is because Kubernetes does not have an internal entity that manages or registers users but relies on external authentication mechanisms (such as the client certificate). Therefore, the user exists for the entire cluster. They can interact with any namespace as long as they have the correct permissions.
 
 
 ## Procedimento 
 
-Genera una chiave RSA privata di 2048 bits.
+Generate a 2048-bit RSA private key.
 
 ```bash
 openssl genrsa -out ./myuser.key 2048
 ```
 
-Creazione di una CSR (Certificate Signing Request), che è una richiesta di firma del certificato
+Create a **CSR (Certificate Signing Request)**, which is a certificate signing request.
 
 ```bash
 openssl req -new -key myuser.key -out myuser.csr -subj "/CN=myuser/O=myns"
 ```
 
-Il parametro `-subj "/CN=myuser/O=myns"` serve a specificare direttamente il **distinguished name (DN)** del soggetto del certificato. Invece di inserire manualmente le informazioni tramite un'interfaccia interattiva, il DN viene passato direttamente tramite la stringa fornita. Nella stringa viene definito:
-- **Common name (CN)**: nome della persona o del servizio a cui appartiene il certificato. In questo caso è il nome dell'utente che stiamo creando.
-- **Organization (O)**: nome dell'organizzazione o del namespace a cui appartiene il soggetto.
-Altri campi possibile in un DN includono **country (C)**, **state (ST)**, **locality (L)**, **organizational unit (OU)**.
+Create a CSR (Certificate Signing Request), which is a certificate signing request.
 
-Anche se è stato specificato il nome di un namespace nel campo **O**, questo non ha un impatto diretto sul contesto del namespace nel quale l'utente può operare.
-Kubernetes non associa automaticamente il namespace specificato nel campo **O** a un namespace nel cluster.
+The parameter `-subj "/CN=myuser/O=myns"` is used to directly specify the subject's **distinguished name (DN)** for the certificate. Instead of manually entering information via an interactive interface, the DN is passed directly through the provided string. The string defines:
 
-Il campo **O** può avere un impatto solo quando vengono utilizzati i gruppi nel contesto di Kubernetes RBAC. Ad esempio, se configurato un **ClusterRoleBinding** o un **RoleBinding** per assegnare ruoli a un gruppo, Kubernetes può associare l'utente al gruppo indicato nel campo **O** del certificato. Questo significa che è possibile definire regole che danno permessi ai gruppi e Kubernetes controllerà il campo **O** nel certificato per vedere se l'utente appartiene a quel gruppo.
+- **Common name (CN)**: nthe name of the person or service to whom the certificate belongs. In this case, it is the name of the user we are creating.
+- **Organization (O)**: the name of the organization or namespace to which the subject belongs. Other possible fields in a **DN include country (C)**, **state (ST)**, **locality (L)**, **organizational unit (OU)**.
 
-Il passo successivo è quello di firmare la richiesta di certificato con la **certiication authority (CA)** del cluster kubernetes.
+Even though a namespace name has been specified in the **O** field, this does not have a direct impact on the namespace context in which the user can operate. Kubernetes does not automatically associate the specified namespace in the **O** field with a namespace in the cluster.
+
+The O field may have an impact only when groups are used in the context of Kubernetes RBAC. For example, if a **ClusterRoleBinding** or a **RoleBinding** is configured to assign roles to a group, Kubernetes can associate the user with the group specified in the **O** field of the certificate. This means it is possible to define rules that give permissions to groups, and Kubernetes will check the **O** field in the certificate to see if the user belongs to that group.
+
+The next step is to sign the certificate request with the cluster's **certification authority (CA)**.
 
 ```bash
 openssl x509 -req -in myuser.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out myuser.crt -days 365
 ```
 
-Il parametro `CAcreateserial` indica che, se non esiste già un file seriale per la CA, ne verrà creato uno. Il file seriale tiene traccia del numero di serie univoco assegnato ai certificati firmati da quella CA.
-Il parametro `day` indica la validità del certificato in giorni.
+The **CAcreateserial** parameter indicates that if no serial file for the CA already exists, one will be created. The serial file tracks the unique serial number assigned to certificates signed by that CA. The **days** parameter indicates the validity of the certificate in days.
 
-Con il comando seguente viene creato il context chiamato `myuser@hands-on` che definisce l'utente `myuser` e il namespace `myns`.
+The following command creates the context named `myuser@hands-on` defining the user `myuser` and the namespace `myns`.
 
 ```bash
 kubectl config set-context myuser@hands-on --cluster=kind-hands-on --user=myuser --namespace=myns
 ```
 
-Il sguente comando configura l'utente nel file di configurazione di Kubernetes, associandolo al certificato e alla chiave privata.
-Queste credenziali saranno utilizzate per autenticare l'utente quando sarà usato in un contesto.
+The next command configures the user in the Kubernetes configuration file, associating them with the certificate and the private key. These credentials will be used to authenticate the user when used in a context.
 
 ```bash
 kubectl config set-credentials myusers --client-certificate=./myuser.crt --client_key=./myuser.key 
 ```
 
-Il comando seguente permette di modificare il contesto attuale con quello dell'utente appena creato.
-Questa operazione ci permetterà di effettuare l'accesso al cluster con il nuovo utente.
+The following command allows switching the current context to the newly created user's context. This operation will allow us to access the cluster with the new user.
 
 ```bash
 kubectl config use-context myuser@hands-on
