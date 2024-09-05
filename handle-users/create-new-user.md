@@ -3,7 +3,7 @@
 Users created via certificates, as in this case, exist globally in the cluster and are not tied to a specific namespace. This is because Kubernetes does not have an internal entity that manages or registers users but relies on external authentication mechanisms (such as the client certificate). Therefore, the user exists for the entire cluster. They can interact with any namespace as long as they have the correct permissions.
 
 
-## Procedimento 
+## Procedure 
 
 Generate a 2048-bit RSA private key.
 
