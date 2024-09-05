@@ -45,7 +45,7 @@ $ kubectl config set-context myuser@hands-on --cluster=hands-on --user=myuser --
 The next command configures the user in the Kubernetes configuration file, associating them with the certificate and the private key. These credentials will be used to authenticate the user when used in a context.
 
 ```console
-$kubectl config set-credentials myuser --client-certificate=./myuser.crt --client_key=./myuser.key 
+$ kubectl config set-credentials myuser --client-certificate=./myuser.crt --client_key=./myuser.key 
 ```
 
 The following command allows switching the current context to the newly created user's context. This operation will allow us to access the cluster with the new user.
