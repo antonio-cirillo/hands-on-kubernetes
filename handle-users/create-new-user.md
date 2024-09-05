@@ -7,14 +7,14 @@ Users created via certificates, as in this case, exist globally in the cluster a
 
 Generate a 2048-bit RSA private key.
 
-```bash
-openssl genrsa -out ./myuser.key 2048
+```console
+$ openssl genrsa -out ./myuser.key 2048
 ```
 
 Create a **CSR (Certificate Signing Request)**, which is a certificate signing request.
 
-```bash
-openssl req -new -key myuser.key -out myuser.csr -subj "/CN=myuser/O=myns"
+```console
+$ openssl req -new -key myuser.key -out myuser.csr -subj "/CN=myuser/O=myns"
 ```
 
 Create a CSR (Certificate Signing Request), which is a certificate signing request.
@@ -30,26 +30,26 @@ The O field may have an impact only when groups are used in the context of Kuber
 
 The next step is to sign the certificate request with the cluster's **certification authority (CA)**.
 
-```bash
-openssl x509 -req -in myuser.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out myuser.crt -days 365
+```console
+$ openssl x509 -req -in myuser.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out myuser.crt -days 365
 ```
 
 The **CAcreateserial** parameter indicates that if no serial file for the CA already exists, one will be created. The serial file tracks the unique serial number assigned to certificates signed by that CA. The **days** parameter indicates the validity of the certificate in days.
 
 The following command creates the context named `myuser@hands-on` defining the user `myuser` and the namespace `myns`.
 
-```bash
-kubectl config set-context myuser@hands-on --cluster=hands-on --user=myuser --namespace=namespace
+```console
+$ kubectl config set-context myuser@hands-on --cluster=hands-on --user=myuser --namespace=namespace
 ```
 
 The next command configures the user in the Kubernetes configuration file, associating them with the certificate and the private key. These credentials will be used to authenticate the user when used in a context.
 
-```bash
-kubectl config set-credentials myuser --client-certificate=./myuser.crt --client_key=./myuser.key 
+```console
+$kubectl config set-credentials myuser --client-certificate=./myuser.crt --client_key=./myuser.key 
 ```
 
 The following command allows switching the current context to the newly created user's context. This operation will allow us to access the cluster with the new user.
 
-```bash
-kubectl config use-context myuser@hands-on
+```console
+$ kubectl config use-context myuser@hands-on
 ```
