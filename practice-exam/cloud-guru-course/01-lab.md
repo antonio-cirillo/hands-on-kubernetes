@@ -27,5 +27,5 @@ Determine which Pod in the `web` namespace with the label `app=auth` is using th
 Save the name of this Pod to the file `/k8s/0003/cpu-pod.txt`.
 
 ```console
-$ kubectl top pod -n web --sort-by cpu -l app=auth --no-headers | awk 'NR==1 {print $1; exit} > /k8s/0003/cpu-pod.txt'
+$ kubectl top pod -n web --sort-by cpu -l app=auth --no-headers | awk 'NR==1 {print $1; exit}' > /k8s/0003/cpu-pod.txt
 ```
