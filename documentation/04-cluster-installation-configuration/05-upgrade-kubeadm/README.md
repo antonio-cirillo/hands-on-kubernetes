@@ -7,8 +7,8 @@ The complete guide on how to upgrade a Kubernetes cluster using Kubeadm can be f
 In the documentation, search for the keyword "**upgrade**".
 
 Important: if, during the search for the Kubernetes version to upgrade to, the desired version is not found, it may be necessary to update the apt repository. 
-The command to update the apt repository can be found in the official documentation, where the installation of kubeadm is explained. T
-he keyword to search for is "**Installing kubeadm**".
+The command to update the apt repository can be found in the official documentation, where the installation of kubeadm is explained.
+The keyword to search for is "**Installing kubeadm**".
 
 Alternatively, the documentation can be found at the following path:
 
