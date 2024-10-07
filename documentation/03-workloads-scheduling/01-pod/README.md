@@ -63,3 +63,15 @@ The `top pod` command allows you to see the resource consumption of pods.
 ```console
 $ kubectl top pods [-l label=value] [--sort-by=[cpu | memory]]
 ```
+
+## Delete a pod without any delay
+
+```console
+$ kubectl delete pod <name> --grace-period=0 --force
+```
+
+## Modify pod label
+
+```console
+$ kubectl label pod <name> <key>=<value> --overwrite
+```
