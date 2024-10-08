@@ -52,7 +52,7 @@ $ systemctl start kubelet
 To obtain the logs related to the kubelet service, you can use the following command:
 
 ```console
-$journalctl -u kubelet
+$ journalctl -u kubelet
 ```
 
 This command will display the logs for the kubelet service, allowing you to identify any errors or issues that may be affecting its operation. 
