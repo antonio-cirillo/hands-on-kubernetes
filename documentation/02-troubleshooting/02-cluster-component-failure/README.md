@@ -28,6 +28,20 @@ $ kubectl logs <pod name>
 $ sudo journalctl -u <component> -f
 ```
 
+If the kube-apiserver doesn't work, check apiserver log with this commands:
+
+```console
+$ cat /var/log/pods/kube-system*/kube-apiserver/*.log
+
+$ docker ps *
+$ docker logs *
+
+$ crictl ps *
+$ crictl logs *
+
+$journalctl | grep apiserver
+```
+
 ## Control Plane
 
 - Verify that all components are running correctly.
