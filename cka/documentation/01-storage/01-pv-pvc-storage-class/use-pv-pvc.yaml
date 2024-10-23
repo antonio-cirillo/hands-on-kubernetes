@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: name
+  namespace: name
+  labels:
+    key: value
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      name: my-app
+      labels:
+        app: my-app
+    containers:
+      - name: my-app-container
+        image: my-image
+        ports:
+          - containertPort: 80
+            name: "http-server"
+        volumeMounts:
+          - mountPath: "/mnt/data"
+            name: "my-volume"
+    volumes:
+      - name: my-volume
+        persistentVolumeClaim:
+          claimName: my-pvc

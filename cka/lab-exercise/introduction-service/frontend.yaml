@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend-container
+        image: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: backend
+        - name: WORDPRESS_DB_USER
+          value: myuser
+        - name: WORDPRESS_DB_PASSWORD
+          value: mypass
+        - name: WORDPRESS_DB_NAME
+          value: mydb
